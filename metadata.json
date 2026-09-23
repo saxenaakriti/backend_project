@@ -1,0 +1,6 @@
+{
+  "name": "WhistleDrop",
+  "description": "Confidential anonymous reporting backend system where whistleblowers can submit reports and track progress securely without creating an account.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

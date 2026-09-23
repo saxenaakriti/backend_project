@@ -1,0 +1,10 @@
+{
+  "name": "whistledrop-python",
+  "version": "1.0.0",
+  "description": "WhistleDrop - Anonymous Confidential Reporting Backend in Python",
+  "scripts": {
+    "dev": "python3 app.py",
+    "build": "pip install -r requirements.txt",
+    "start": "python3 app.py"
+  }
+}

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhistleDrop — Speak Without Being Seen</title>
+  <meta name="description" content="A simple confidential reporting system made with Python and Flask.">
+  <style>
+    /* Basic, clean styling suitable for a 1st year student project */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f4f6f9;
+      color: #333333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    /* Header */
+    header {
+      background-color: #1e293b;
+      color: #ffffff;
+      padding: 20px 24px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    header h1 {
+      font-size: 22px;
+    }
+    header p {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .badge-python {
+      background-color: #3b82f6;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    /* Simple Navigation Bar */
+    nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    nav button {
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #64748b;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+    nav button:hover {
+      background-color: #f1f5f9;
+      color: #1e293b;
+    }
+    nav button.active {
+      background-color: #2563eb;
+      color: #ffffff;
+    }
+    /* Cards and Sections */
+    .card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #1e293b;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+    }
+    .info-banner {
+      background-color: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 12px;
+      font-size: 13px;
+      color: #1e40af;
+      margin-bottom: 16px;
+      border-radius: 4px;
+    }
+    /* Form inputs */
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 5px;
+      color: #475569;
+    }
+    input[type="text"], input[type="url"], select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #2563eb;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .btn {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+    .btn-secondary {
+      background-color: #64748b;
+    }
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+    /* Alert / Result Box */
+    .result-box {
+      background-color: #ecfdf5;
+      border: 1px solid #10b981;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      display: none;
+    }
+    .tracking-code-highlight {
+      font-family: monospace;
+      font-size: 18px;
+      font-weight: bold;
+      color: #047857;
+      background: #d1fae5;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 8px 0;
+    }
+    /* Table for Moderator */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f8fafc;
+      font-weight: bold;
+      color: #475569;
+    }
+    tr:nth-child(even) {
+      background-color: #fdfdfe;
+    }
+    /* Status Badges */
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .status-Submitted { background-color: #fef3c7; color: #92400e; }
+    .status-UnderInvestigation { background-color: #dbeafe; color: #1e40af; }
+    .status-Resolved { background-color: #d1fae5; color: #065f46; }
+    .status-Dismissed { background-color: #f1f5f9; color: #475569; }
+
+    .category-badge {
+      background-color: #f3e8ff;
+      color: #6b21a8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    /* Statistics Boxes */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 15px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 22px;
+      font-weight: bold;
+      color: #1e293b;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+    }
+    .section-view {
+      display: none;
+    }
+    .section-view.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header Section -->
+    <header>
+      <div>
+        <h1>WhistleDrop — Speak Without Being Seen</h1>
+        <p>Confidential Anonymous Reporting System (Python + Flask Backend)</p>
+      </div>
+      <div>
+        <span class="badge-python">Python 3.10 • SQLite</span>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav>
+      <button class="active" onclick="switchSection('submit-sec', this)">1. Submit Report</button>
+      <button onclick="switchSection('track-sec', this)">2. Track My Report</button>
+      <button onclick="switchSection('mod-sec', this)">3. Moderator View</button>
+      <button onclick="switchSection('api-sec', this)">4. Backend API Info</button>
+    </nav>
+
+    <!-- SECTION 1: SUBMIT REPORT (ANONYMOUS) -->
+    <section id="submit-sec" class="section-view active">
+      <div class="card">
+        <h2>Submit an Anonymous Report</h2>
+        <div class="info-banner">
+          🔒 <strong>Zero Login Required:</strong> You do not need an account, email, or password. Once submitted, you will receive a <strong>Tracking ID</strong> to check the status later without revealing who you are.
+        </div>
+
+        <form id="submitReportForm" onsubmit="handleReportSubmit(event)">
+          <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category" name="category" required>
+              <option value="Security">Security (Data breach, credential leak, cyber threat)</option>
+              <option value="Harassment">Harassment (Workplace misconduct, discrimination, bullying)</option>
+              <option value="Corruption">Corruption (Bribery, fraud, financial embezzlement)</option>
+              <option value="Technical">Technical (Safety violations, test falsification)</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Incident Description *</label>
+            <textarea id="description" name="description" placeholder="Describe the incident clearly (what happened, where, and when)..." required minlength="10"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="evidence_url">Evidence / Reference URL (Optional)</label>
+            <input type="url" id="evidence_url" name="evidence_url" placeholder="https://example.com/evidence-document-or-link">
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn">Submit Report Anonymously</button>
+        </form>
+
+        <!-- Result Box shown after submission -->
+        <div id="submissionResult" class="result-box">
+          <h3 style="color: #065f46; font-size: 16px;">Success! Your report was registered.</h3>
+          <p style="font-size: 13px; margin-top: 6px;">
+            Here is your private Tracking ID. Please write it down:
+          </p>
+          <div class="tracking-code-highlight" id="newTrackingId">WD-XXXXXX</div>
+          <p style="font-size: 12px; color: #4b5563;">
+            Use this Tracking ID in the <strong>"Track My Report"</strong> tab to check if a moderator has reviewed or resolved it.
+          </p>
+          <button class="btn btn-secondary" style="margin-top: 10px; font-size: 12px; padding: 6px 12px;" onclick="copyAndGoToTrack()">
+            Copy Tracking ID & Track Now
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: TRACK REPORT STATUS -->
+    <section id="track-sec" class="section-view">
+      <div class="card">
+        <h2>Track Your Report</h2>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+          Enter the Tracking ID you received when submitting your report.
+        </p>
+
+        <form id="trackReportForm" onsubmit="handleTrackReport(event)">
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="trackInput" placeholder="e.g. WD-SEC101" required style="flex: 1;">
+            <button type="submit" class="btn" id="trackBtn">Track Status</button>
+          </div>
+        </form>
+
+        <!-- Display tracking results -->
+        <div id="trackResultArea" style="margin-top: 20px; display: none;">
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div>
+                <span style="font-weight: bold; font-size: 16px;" id="dispTrackingId"></span>
+                <span class="category-badge" id="dispCategory" style="margin-left: 8px;"></span>
+              </div>
+              <div>
+                <span id="dispStatusBadge" class="status-badge"></span>
+              </div>
+            </div>
+
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 12px;" id="dispDate"></div>
+
+            <div style="margin-bottom: 12px;">
+              <strong>Your Description:</strong>
+              <p id="dispDescription" style="font-size: 13px; margin-top: 4px; background: white; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;"></p>
+            </div>
+
+            <div id="dispEvidenceRow" style="margin-bottom: 12px; font-size: 13px;">
+              <strong>Evidence Link:</strong> <a id="dispEvidenceLink" href="#" target="_blank" style="color: #2563eb;"></a>
+            </div>
+
+            <div style="background: #ecfeff; border-left: 4px solid #06b6d4; padding: 10px; border-radius: 4px;">
+              <strong style="color: #0e7490; font-size: 13px;">Moderator Remarks / Updates:</strong>
+              <p id="dispModeratorNote" style="font-size: 13px; color: #155e75; margin-top: 4px;"></p>
+            </div>
+          </div>
+        </div>
+
+        <div id="trackNotFound" style="margin-top: 15px; display: none;" class="info-banner" style="border-left-color: #ef4444; background-color: #fef2f2; color: #991b1b;">
+          ❌ No report found with that Tracking ID. Please double-check your code.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: MODERATOR VIEW -->
+    <section id="mod-sec" class="section-view">
+      <div class="card">
+        <h2>Moderator Review Dashboard</h2>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+          Moderators can review incoming reports, update their status, and add notes for the reporter.
+        </p>
+
+        <!-- Stats row -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="statTotal">-</div>
+            <div class="stat-label">Total Reports</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statSubmitted" style="color: #d97706;">-</div>
+            <div class="stat-label">Pending / Submitted</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statInvestigating" style="color: #2563eb;">-</div>
+            <div class="stat-label">Under Investigation</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statResolved" style="color: #059669;">-</div>
+            <div class="stat-label">Resolved</div>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center;">
+          <label style="margin: 0; font-size: 13px;">Filter by Category:</label>
+          <select id="filterCategory" onchange="loadModeratorData()" style="width: auto; padding: 6px 10px;">
+            <option value="All">All Categories</option>
+            <option value="Security">Security</option>
+            <option value="Harassment">Harassment</option>
+            <option value="Corruption">Corruption</option>
+            <option value="Technical">Technical</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <label style="margin: 0; font-size: 13px;">Filter by Status:</label>
+          <select id="filterStatus" onchange="loadModeratorData()" style="width: auto; padding: 6px 10px;">
+            <option value="All">All Statuses</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Under Investigation">Under Investigation</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Dismissed">Dismissed</option>
+          </select>
+
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="loadModeratorData()">
+            Refresh
+          </button>
+        </div>
+
+        <!-- Reports Table -->
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tracking ID</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Moderator Note</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: #64748b;">Loading reports...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: BACKEND API INFO -->
+    <section id="api-sec" class="section-view">
+      <div class="card">
+        <h2>Backend Python & Flask Architecture</h2>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+          This project is built using Python 3 and Flask with an SQLite database backend.
+        </p>
+
+        <div style="font-size: 13px; line-height: 1.8;">
+          <h3 style="font-size: 15px; margin-bottom: 6px; color: #1e293b;">Backend REST API Endpoints:</h3>
+          <ul style="padding-left: 20px; margin-bottom: 15px;">
+            <li><strong>POST /api/reports</strong> — Submit a new anonymous report (JSON payload: category, description, optional evidence_url). Returns generated tracking ID.</li>
+            <li><strong>GET /api/reports/&lt;tracking_id&gt;</strong> — Fetch report status and moderator remarks by tracking code.</li>
+            <li><strong>GET /api/moderator/reports</strong> — Retrieve all reports (supports ?category= and ?status= filters).</li>
+            <li><strong>POST /api/moderator/update/&lt;id&gt;</strong> — Update report status and add moderator notes.</li>
+            <li><strong>GET /api/health</strong> — Health check endpoint returning backend status.</li>
+          </ul>
+
+          <h3 style="font-size: 15px; margin-bottom: 6px; color: #1e293b;">Python Project Files:</h3>
+          <ul style="padding-left: 20px;">
+            <li><code>app.py</code>: The main Flask server with all route handlers.</li>
+            <li><code>database.py</code>: SQLite database functions for creating tables, inserting, updating, and querying reports.</li>
+            <li><code>templates/index.html</code>: Simple HTML/CSS frontend.</li>
+            <li><code>EXPLANATION.md</code>: Project explanation document explaining how the backend was created.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Simple JavaScript for tab navigation and API calls -->
+  <script>
+    let lastGeneratedId = "";
+
+    function switchSection(sectionId, btn) {
+      document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+
+      document.getElementById(sectionId).classList.add('active');
+      btn.classList.add('active');
+
+      if (sectionId === 'mod-sec') {
+        loadModeratorData();
+      }
+    }
+
+    // Submit Report Form Handler
+    async function handleReportSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      const payload = {
+        category: document.getElementById('category').value,
+        description: document.getElementById('description').value,
+        evidence_url: document.getElementById('evidence_url').value
+      };
+
+      try {
+        const res = await fetch('/api/reports', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          lastGeneratedId = data.tracking_id;
+          document.getElementById('newTrackingId').textContent = data.tracking_id;
+          document.getElementById('submissionResult').style.display = 'block';
+          document.getElementById('submitReportForm').reset();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to submit report'));
+        }
+      } catch (err) {
+        alert('Could not connect to Python backend: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Report Anonymously';
+      }
+    }
+
+    function copyAndGoToTrack() {
+      if (lastGeneratedId) {
+        document.getElementById('trackInput').value = lastGeneratedId;
+        const trackNavBtn = document.querySelectorAll('nav button')[1];
+        switchSection('track-sec', trackNavBtn);
+        handleTrackReport(new Event('submit'));
+      }
+    }
+
+    // Track Report Form Handler
+    async function handleTrackReport(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const trackingId = document.getElementById('trackInput').value.trim();
+      const resultArea = document.getElementById('trackResultArea');
+      const notFoundArea = document.getElementById('trackNotFound');
+
+      if (!trackingId) return;
+
+      try {
+        const res = await fetch('/api/reports/' + encodeURIComponent(trackingId));
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          const r = data.report;
+          notFoundArea.style.display = 'none';
+          resultArea.style.display = 'block';
+
+          document.getElementById('dispTrackingId').textContent = r.tracking_id;
+          document.getElementById('dispCategory').textContent = r.category;
+
+          const badge = document.getElementById('dispStatusBadge');
+          badge.textContent = r.status;
+          badge.className = 'status-badge status-' + r.status.replace(/\s+/g, '');
+
+          document.getElementById('dispDate').textContent = 'Submitted on: ' + r.created_at;
+          document.getElementById('dispDescription').textContent = r.description;
+
+          const evRow = document.getElementById('dispEvidenceRow');
+          const evLink = document.getElementById('dispEvidenceLink');
+          if (r.evidence_url && r.evidence_url.trim() !== '') {
+            evLink.href = r.evidence_url;
+            evLink.textContent = r.evidence_url;
+            evRow.style.display = 'block';
+          } else {
+            evRow.style.display = 'none';
+          }
+
+          const note = document.getElementById('dispModeratorNote');
+          if (r.moderator_note && r.moderator_note.trim() !== '') {
+            note.textContent = r.moderator_note;
+          } else {
+            note.textContent = 'No moderator notes yet. Your report is under review.';
+          }
+        } else {
+          resultArea.style.display = 'none';
+          notFoundArea.style.display = 'block';
+        }
+      } catch (err) {
+        alert('Error contacting backend: ' + err.message);
+      }
+    }
+
+    // Moderator Load Data
+    async function loadModeratorData() {
+      const cat = document.getElementById('filterCategory').value;
+      const stat = document.getElementById('filterStatus').value;
+      const tbody = document.getElementById('reportsTableBody');
+
+      try {
+        const res = await fetch(\`/api/moderator/reports?category=\${encodeURIComponent(cat)}&status=\${encodeURIComponent(stat)}\`);
+        const data = await res.json();
+
+        // Update stats
+        if (data.stats) {
+          document.getElementById('statTotal').textContent = data.stats.total;
+          document.getElementById('statSubmitted').textContent = data.stats.submitted;
+          document.getElementById('statInvestigating').textContent = data.stats.investigating;
+          document.getElementById('statResolved').textContent = data.stats.resolved;
+        }
+
+        if (!data.reports || data.reports.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #64748b;">No reports found.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.reports.map(r => \`
+          <tr>
+            <td>\${r.id}</td>
+            <td><strong>\${r.tracking_id}</strong></td>
+            <td><span class="category-badge">\${r.category}</span></td>
+            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="\${r.description}">\${r.description}</td>
+            <td style="font-size: 11px;">\${r.created_at}</td>
+            <td>
+              <select id="status-select-\${r.id}" style="padding: 4px; font-size: 12px;">
+                <option value="Submitted" \${r.status === 'Submitted' ? 'selected' : ''}>Submitted</option>
+                <option value="Under Investigation" \${r.status === 'Under Investigation' ? 'selected' : ''}>Under Investigation</option>
+                <option value="Resolved" \${r.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                <option value="Dismissed" \${r.status === 'Dismissed' ? 'selected' : ''}>Dismissed</option>
+              </select>
+            </td>
+            <td>
+              <input type="text" id="note-input-\${r.id}" value="\${r.moderator_note || ''}" placeholder="Add note..." style="padding: 4px; font-size: 12px;">
+            </td>
+            <td>
+              <button class="btn" style="padding: 4px 8px; font-size: 12px;" onclick="saveStatusUpdate(\${r.id})">Save</button>
+            </td>
+          </tr>
+        \`).join('');
+
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="8" style="color: red;">Failed to load data from backend.</td></tr>';
+      }
+    }
+
+    async function saveStatusUpdate(reportId) {
+      const newStatus = document.getElementById('status-select-' + reportId).value;
+      const note = document.getElementById('note-input-' + reportId).value;
+
+      try {
+        const res = await fetch('/api/moderator/update/' + reportId, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus, moderator_note: note })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          alert('Report updated successfully!');
+          loadModeratorData();
+        } else {
+          alert('Failed to update: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Error updating report: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>

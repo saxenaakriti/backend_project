@@ -1,0 +1,109 @@
+[
+  {
+    "id": "7fb00f72-08be-4b5a-a446-9995eb2dc671",
+    "trackingId": "WD-HAR-9C871C",
+    "trackingKey": "4bb368dc8e1e707b74be45e87838998b",
+    "category": "Harassment",
+    "description": "Retaliatory performance review given following internal safety audit report.",
+    "evidenceUrl": "https://example.com/evidence-document-1",
+    "status": "UNDER_INVESTIGATION",
+    "priority": "HIGH",
+    "createdAt": "2026-09-21T20:07:07.922Z",
+    "updatedAt": "2026-09-21T20:07:26.568Z",
+    "timeline": [
+      {
+        "id": "5577b37a-6b43-44d1-ae2b-7ddf46c23a14",
+        "type": "REPORT_CREATED",
+        "text": "Confidential report securely received and registered.",
+        "author": "System",
+        "createdAt": "2026-09-21T20:07:07.922Z",
+        "isPublic": true
+      },
+      {
+        "id": "c5d642fc-7913-4505-8ed1-17e729ec73d5",
+        "type": "REPORTER_MESSAGE",
+        "text": "Adding a copy of the formal review notification received yesterday.",
+        "evidenceUrl": "https://example.com/additional-evidence-doc",
+        "author": "Reporter",
+        "createdAt": "2026-09-21T20:07:21.019Z",
+        "isPublic": true
+      },
+      {
+        "id": "a04b92d1-91ac-4cf5-a820-dcb0810f3fab",
+        "type": "STATUS_CHANGE",
+        "text": "Case escalated to Independent Ethics Ombudsman for immediate review.",
+        "author": "Moderator",
+        "createdAt": "2026-09-21T20:07:26.568Z",
+        "isPublic": true
+      },
+      {
+        "id": "ff222151-2d6f-43f3-acd1-1088358219df",
+        "type": "INTERNAL_NOTE",
+        "text": "Assigned to investigator Sarah M. Employee relations notified.",
+        "author": "Moderator",
+        "createdAt": "2026-09-21T20:07:26.568Z",
+        "isPublic": false
+      }
+    ]
+  },
+  {
+    "id": "7184d4f1-ad28-4a1c-b262-2acc2fad9ffa",
+    "trackingId": "WD-SEC-8921",
+    "trackingKey": "92ab26d2920da7708381e60713f61304",
+    "category": "Security",
+    "description": "Unprotected AWS credentials found committed to a public GitHub repository belonging to the cloud infra team.",
+    "evidenceUrl": "https://pastebin.com/raw/sample-redacted-leak",
+    "status": "UNDER_INVESTIGATION",
+    "priority": "HIGH",
+    "createdAt": "2026-09-19T20:06:57.334Z",
+    "updatedAt": "2026-09-20T20:06:57.335Z",
+    "timeline": [
+      {
+        "id": "65c62020-f64e-4f11-87c9-a4d248b5bbb3",
+        "type": "REPORT_CREATED",
+        "text": "Confidential report received into WhistleDrop system.",
+        "author": "System",
+        "createdAt": "2026-09-19T20:06:57.335Z",
+        "isPublic": true
+      },
+      {
+        "id": "f1a61709-7c0c-431b-b9a5-8eb9742535f8",
+        "type": "STATUS_CHANGE",
+        "text": "Status updated to Under Active Investigation by SecOps triage.",
+        "author": "Moderator",
+        "createdAt": "2026-09-20T20:06:57.335Z",
+        "isPublic": true
+      },
+      {
+        "id": "dac0315e-2a59-4629-90ac-076340388e3b",
+        "type": "INTERNAL_NOTE",
+        "text": "Keys revoked immediately in AWS IAM. Auditing CloudTrail logs for unauthorized usage.",
+        "author": "Moderator",
+        "createdAt": "2026-09-20T20:06:57.335Z",
+        "isPublic": false
+      }
+    ]
+  },
+  {
+    "id": "5ece7c54-224f-4420-8941-0d234931a491",
+    "trackingId": "WD-COR-4103",
+    "trackingKey": "528db642b2fc8cbecafc7c8351b1e37b",
+    "category": "Corruption",
+    "description": "Procurement bid manipulation in vendor selection process for Q3 IT equipment renewal.",
+    "evidenceUrl": "https://docs.internal-procurement-records.test/audit-ref-77",
+    "status": "SUBMITTED",
+    "priority": "MEDIUM",
+    "createdAt": "2026-09-21T16:06:57.335Z",
+    "updatedAt": "2026-09-21T16:06:57.335Z",
+    "timeline": [
+      {
+        "id": "9dc96314-2995-487f-9fee-1fc5affa8b6d",
+        "type": "REPORT_CREATED",
+        "text": "Confidential report submitted anonymously.",
+        "author": "System",
+        "createdAt": "2026-09-21T16:06:57.335Z",
+        "isPublic": true
+      }
+    ]
+  }
+]
